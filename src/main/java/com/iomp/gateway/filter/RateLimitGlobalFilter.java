@@ -9,9 +9,11 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.iomp.gateway.service.RateLimitService;
 
+import lombok.extern.log4j.Log4j2;
 import reactor.core.publisher.Mono;
 
 @Component
+@Log4j2
 public class RateLimitGlobalFilter implements GlobalFilter, Ordered {
 
     private final RateLimitService rateLimitService;
@@ -39,6 +41,11 @@ public class RateLimitGlobalFilter implements GlobalFilter, Ordered {
     	                            if (allowed) {
     	                                return chain.filter(exchange);
     	                            }
+    	                            log.warn(
+    	                            	    "Rate limit exceeded: username={}, path={}",
+    	                            	    username,
+    	                            	    exchange.getRequest().getURI().getPath()
+    	                            	);
 
     	                            exchange.getResponse()
     	                                    .setStatusCode(

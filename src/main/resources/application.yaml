@@ -1,6 +1,12 @@
 server:
   port: 8080
 
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.security: INFO
+    org.springframework.data.redis: WARN
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 900000
@@ -13,25 +19,29 @@ spring:
           routes:
 
             - id: auth-service
-              uri: http://localhost:8081
+              uri: ${BACKEND_BASE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/auth/**
 
             - id: portfolio-service
-              uri: http://localhost:8081
+              uri: ${BACKEND_BASE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/portfolios/**
 
             - id: transaction-service
-              uri: http://localhost:8081
+              uri: ${BACKEND_BASE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/transactions/**
 
             - id: security-service
-              uri: http://localhost:8081
+              uri: ${BACKEND_BASE_URL:http://localhost:8081}
               predicates:
                 - Path=/api/securities/**
+            - id: holding-service
+              uri: ${BACKEND_BASE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/holdings/**
   data:
     redis:
-      host: localhost
-      port: 6379
+      host:  ${REDIS_HOST:localhost}
+      port:  ${REDIS_PORT:6379}
